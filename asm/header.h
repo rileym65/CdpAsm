@@ -98,6 +98,9 @@ LINK int    currentFile;
 LINK char   line[1024];
 LINK char   rawLine[1024];
 
+LINK char **sourceFiles;
+LINK int    numSourceFiles;
+
 extern void   addDefine(char* l,char* v);
 extern int    assemble(char* line);
 extern int    assemblyPass(int p);

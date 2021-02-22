@@ -1,9 +1,10 @@
 #define MAIN
 #include "header.h"
 
-int main(int argc, char** argv) {
+void assembleFile(char* sourceName) {
   int i;
   int j;
+
   numOpcodes = 0;
   labelCount = 0;
   defineCount = 0;
@@ -12,24 +13,6 @@ int main(int argc, char** argv) {
   errors = 0;
   currentFile = 0;
   startAddress = 0;
-  showList = 0;
-  verbose = 0;
-  
-  strcpy(sourceName,"");
-  for (i=1; i<argc; i++) {
-    if (strcmp(argv[i],"-l") == 0) showList = -1;
-    if (strcmp(argv[i],"-x") == 0) showXref = -1;
-    if (strcmp(argv[i],"-v") == 0) verbose = -1;
-    if (strcmp(argv[i],"-V") == 0) printf("Cdp/Asm v%s\n",VERSION);
-    if (strncmp(argv[i],"-D",2) == 0) {
-      addDefine(argv[i]+2,"1");
-      }
-    if (argv[i][0] != '-') strcpy(sourceName, argv[i]);
-    }
-  if (strlen(sourceName) == 0) {
-    printf("No source file\n");
-    exit(1);
-    }
 
   strcpy(baseName, sourceName);
   if (strchr(baseName,'.') != NULL) {
@@ -92,6 +75,72 @@ int main(int argc, char** argv) {
   printf("Lines Assembled: %d\n",linesRead);
   printf("Errors         : %d\n",errors);
   printf("Code Generated : %d\n",codeGenerated);
+  printf("\n");
+
+  if (defineCount > 0) {
+    for (i=0; i<defineCount; i++) {
+      free(defineValues[i]);
+      free(defines[i]);
+      }
+    free(defineValues);
+    free(defines);
+    }
+
+  if (publicsCount > 0) {
+    for (i=0; i<publicsCount; i++)
+      free(publics[i]);
+    free(publics);
+    }
+
+  if (labelCount > 0) {
+    for (i=0; i<labelCount; i++) {
+      free(labels[i]);
+      if (labelUsedCount[i] > 0) {
+        free(labelUsed[i]);
+        }
+      }
+    free(labels);
+    free(labelValues);
+    free(labelFlags);
+    free(labelLine);
+    free(labelUsed);
+    }
+  }
+
+int main(int argc, char** argv) {
+  int i;
+
+  showList = 0;
+  verbose = 0;
+  numSourceFiles = 0;
+  
+  strcpy(sourceName,"");
+  for (i=1; i<argc; i++) {
+    if (strcmp(argv[i],"-l") == 0) showList = -1;
+    if (strcmp(argv[i],"-x") == 0) showXref = -1;
+    if (strcmp(argv[i],"-v") == 0) verbose = -1;
+    if (strcmp(argv[i],"-V") == 0) printf("Cdp/Asm v%s\n",VERSION);
+    if (strncmp(argv[i],"-D",2) == 0) {
+      addDefine(argv[i]+2,"1");
+      }
+    if (argv[i][0] != '-') {
+      if (numSourceFiles == 0)
+        sourceFiles = (char**)malloc(sizeof(char*));
+      else
+        sourceFiles = (char**)realloc(sourceFiles,sizeof(char*)*(numSourceFiles+1));
+      sourceFiles[numSourceFiles] = (char*)malloc(strlen(argv[i])+1);
+      strcpy(sourceFiles[numSourceFiles++], argv[i]);
+      } 
+    }
+  if (numSourceFiles == 0) {
+    printf("No source files\n");
+    exit(1);
+    }
+
+  for (i=0; i<numSourceFiles; i++) {
+    assembleFile(sourceFiles[0]);
+    }
+
   return 0;
   }
 
