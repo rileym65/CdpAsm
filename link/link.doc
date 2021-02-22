@@ -1,0 +1,5 @@
+-b                       - binary output
+-e                       - Elf/OS executable header
+-i                       - intel hex output
+-r                       - RCS hex output (default)
+-v                       - verbose mode

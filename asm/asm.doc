@@ -1,0 +1,107 @@
+         EXEC    start,end,exec      - Build Elf/OS execution header
+         ID      branch              - Build id Block with BR to branch
+         FILDES  dta                 - Construct a FILDES using specified dta
+label:   EQU     value
+label:   EXTERN
+         PUBLIC  label
+         DS      size
+         DB      byte,byte,...
+         DW      word,word,...
+
+.1805                                - Enable 1805/6 instructions
+.1805A                               - Enable 1805A instructions
+.list                                - turn on listing
+.xref                                - show cross reference
+.op "opcode","arglist","translation" - Add opcode definition
+
+Allowed in expressions:
+  .1
+  .0
+  high
+  low
+  *
+  /
+  +
+  -
+  |
+  &
+  ^
+  ()
+
+
+#define name
+#define name  value
+#undef  name
+#ifdef name
+#ifndef name
+#else
+#endif
+#if
+
+Allowd in #if expression:
+  DEFINED
+  !
+  +
+  -
+  *
+  /
+  ||
+  &&
+  >
+  >=
+  <
+  <=
+  !=
+  ==
+  ()
+  symbol
+
+0xxxxh - hex constant, 0-9,a-f,A-F
+$xxxx - hex constant, 0-9,a-f,A-F
+%xxxx - binary constant, 0-1, _ allowed to separate bytes/nybbles/etc
+
+command line switches:
+-l       - show assembly list
+-x       - show cross assembly
+-v       - verbose output
+-V       - show version
+
+Output file
+-----------
+The standard output file is an ascii file representing the assembled
+machine code.  The first character of each specifies what type of line
+the line is.  Any programs designed to read these files should completely
+ignore lines beginning with symbols they do not know, since there is the
+possiblity of new line types in the future.  The current line types are
+currently defined:
+: - Data line
+    Immediately following the : is a a-4digit hexadecimal number, this is
+    the address in memory where the following bytes go.  Following the
+    address are up to 16 2-digit bytes, separated by space.  These bytes
+    are to be loaded starting from the specified addres.
+* - Start Address
+    This symbol specifies where the start address of the program is.
+    Following the * is a 4-digit hexadecimal number representing the
+    starting offset for the program.
+? - Missing reference (word)
+    This symbol is used to mark where missing references were in the source
+    file for which the symbols were declared external.  This can be used
+    by a library linker in order to locate where external references need
+    to be filled in.  Following the ? is the name of the external symbol.
+    The linker should remove this line and modify the first bytes (not
+    address) of the following : line.
+- - Missing reference (byte)
+    This symbol is used to mark where missing references were in the source
+    file for which the symbols were declared external.  This can be used
+    by a library linker in order to locate where external references need
+    to be filled in.  Following the ? is the name of the external symbol.
+    The linker should remove this line and modify the first bytes (not
+    address) of the following : line.
+= - Public symbol
+    This line is used to mark where public symbols are.  It is used by
+    the linker to provide the value for a symbol.  Immediately following the
+    = is the 4-digit value of the symbol followed by a space and the symbol
+    name. Unlike the # marker, this specifies a symbol for which no code
+    is copied.
+# - Linker flags
+

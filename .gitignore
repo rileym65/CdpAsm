@@ -1,0 +1,13 @@
+cdpasm
+cdplink
+tointel.pl
+x.x
+*.o
+*.asm
+*.bin
+*.cdp
+*.def
+*.hex
+*.inc
+*.num
+*.prg
