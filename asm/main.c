@@ -1,10 +1,12 @@
 #define MAIN
 #include "header.h"
 
-void assembleFile(char* sourceName) {
+void assembleFile(char* filename) {
   int i;
   int j;
+  char sourceName[1024];
 
+  strcpy(sourceName, filename);
   numOpcodes = 0;
   labelCount = 0;
   defineCount = 0;
@@ -76,7 +78,6 @@ void assembleFile(char* sourceName) {
   printf("Errors         : %d\n",errors);
   printf("Code Generated : %d\n",codeGenerated);
   printf("\n");
-
   if (defineCount > 0) {
     for (i=0; i<defineCount; i++) {
       free(defineValues[i]);
@@ -138,7 +139,7 @@ int main(int argc, char** argv) {
     }
 
   for (i=0; i<numSourceFiles; i++) {
-    assembleFile(sourceFiles[0]);
+    assembleFile(sourceFiles[i]);
     }
 
   return 0;
